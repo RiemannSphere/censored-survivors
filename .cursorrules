@@ -183,21 +183,3 @@ We assume every customer has one tag from every category.
 "Mixed Posters" → 50% platform posts, 50% native posts.
 "Native Posters" → 90%+ posts are published directly on social networks (churn risk).
 "No Posters" → Logged in but hasn’t posted in X days.
-
-3. Feature Utilization Cohorts
-"Full Feature Users" → Uses multiple features like scheduling, analytics, and automation.
-"Single Feature Users" → Only uses one key feature (e.g., post scheduling).
-"Explorer" → Recently started using new features.
-"Stagnant" → No feature adoption in X weeks.
-
-4. Business-Level Cohorts
-"Enterprise Clients" → Large teams, multiple connected accounts.
-"SMB Clients" → Small businesses with 1–5 users.
-"Freemium Users" → Free plan users (high churn risk).
-"Enterprise Downgraders" → Previously enterprise, now on a smaller plan (high churn risk).
-
-5. Sentiment-Based Cohorts
-"Satisfied Customers" → Positive support tickets, low issue count.
-"Unhappy Customers" → Recent complaints, feature requests, billing issues.
-"Silent Churners" → No complaints but decreasing usage.
-"Support Seekers" → High interaction with customer support.
