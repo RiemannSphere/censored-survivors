@@ -100,6 +100,21 @@
 - run.py is for running the model
 - generate.py is for generating simulated data in order to test the model on reliable source
 
+## Steps to create a new model
+Step 1: Create a directory for the model inside lib directory.
+
+Step 2: Generate the models.py for the generic input and output classes. The input should have entity_id, event_time, event_status but also additional parameters specific to the model.
+
+Step 3: Generate a generate.py file to simulate input data based on a distribution. Use the shared library with the distribution classes.
+
+Step 4: Generate the run.py file in which you implement the actual model. 
+
+Step 5: Create a tests directory and put inside 2 files:
+
+Step 5.1: Visual tests to verify the output of the model with a theoretical values.
+
+Step 5.2: Unit test checking more precisely if the actual and theoretical results fit, for all distributions.
+
 ## Example Data
 
 ### Kaplan-Meier
