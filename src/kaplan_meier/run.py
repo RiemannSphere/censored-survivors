@@ -26,26 +26,32 @@ def calculate_survival_curve(data: KaplanMeierData) -> Tuple[np.ndarray, np.ndar
     times = times[sort_idx]
     events = events[sort_idx]
     
-    # Get unique time points and count events at each time
+    # Get unique time points
     unique_times = np.unique(times)
+    
+    # Add time 0 if not present
+    if unique_times[0] > 0:
+        unique_times = np.concatenate(([0], unique_times))
+    
     survival_prob = np.ones(len(unique_times))
     
     # Calculate survival probability
-    at_risk = len(times)
-    prob_so_far = 1.0
+    n_subjects = len(times)
     
     for i, t in enumerate(unique_times):
-        # Count events and censoring at this time point
-        mask = times == t
-        events_at_t = events[mask].sum()
+        if t == 0:
+            survival_prob[i] = 1.0
+            continue
+            
+        # Count events and at-risk subjects at this time
+        at_risk = np.sum(times >= t)  # Number still at risk
+        events_at_t = np.sum(events[times == t])  # Number of events at this time
         
         # Calculate survival probability
         if at_risk > 0:
-            prob_so_far *= (1 - events_at_t / at_risk)
-        survival_prob[i] = prob_so_far
-        
-        # Update number at risk
-        at_risk -= mask.sum()
+            survival_prob[i] = survival_prob[i-1] * (1 - events_at_t / at_risk)
+        else:
+            survival_prob[i] = survival_prob[i-1]  # If no subjects at risk, maintain previous probability
     
     return unique_times, survival_prob
 

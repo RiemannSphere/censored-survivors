@@ -91,23 +91,38 @@ def generate_survival_times(config: CohortConfig) -> KaplanMeierData:
     else:
         raise ValueError(f"Unsupported distribution: {params.distribution}")
     
+    # Generate censoring times from the same distribution family
+    # but with a larger scale to ensure reasonable censoring
+    if isinstance(params, WeibullParams):
+        censoring_times = np.random.weibull(params.shape, size) * (params.scale * 1.5)
+    elif isinstance(params, ExponentialParams):
+        censoring_times = np.random.exponential(params.scale * 1.5, size)
+    elif isinstance(params, GammaParams):
+        censoring_times = np.random.gamma(params.shape, params.scale * 1.5, size)
+    elif isinstance(params, LogNormalParams):
+        censoring_times = np.random.lognormal(params.mu, params.sigma * 1.2, size)
+    
     # Round times to integers
     times = np.round(times).astype(int)
+    censoring_times = np.round(censoring_times).astype(int)
     
-    # Generate censoring indicators
-    n_censored = int(size * params.censoring_rate)
-    event_status = np.ones(size, dtype=int)
-    censored_indices = np.random.choice(size, n_censored, replace=False)
-    event_status[censored_indices] = 0
+    # Determine event status based on whether event occurs before censoring
+    event_status = (times <= censoring_times).astype(int)
+    
+    # Adjust observed times to be the minimum of event and censoring times
+    observed_times = np.minimum(times, censoring_times)
+    
+    # Ensure minimum time is 1
+    observed_times = np.maximum(observed_times, 1)
     
     # Create KaplanMeierInput objects
     km_inputs = [
         KaplanMeierInput(
             entity_id=i + 1,
-            event_time=max(1, t),  # Ensure minimum time is 1
+            event_time=t,
             event_status=s
         )
-        for i, (t, s) in enumerate(zip(times, event_status))
+        for i, (t, s) in enumerate(zip(observed_times, event_status))
     ]
     
     return KaplanMeierData(data=km_inputs)

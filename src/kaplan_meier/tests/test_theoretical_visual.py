@@ -3,10 +3,13 @@
 from typing import Dict, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import special
 from ..generate import (
     CohortConfig,
     WeibullParams,
     ExponentialParams,
+    GammaParams,
+    LogNormalParams,
     DistributionType,
     generate_survival_times
 )
@@ -29,6 +32,8 @@ def plot_survival_comparison(
     colors = {
         "Weibull": "#2ecc71",      # Green
         "Exponential": "#3498db",   # Blue
+        "Gamma": "#e74c3c",        # Red
+        "LogNormal": "#9b59b6"     # Purple
     }
     
     for name, data in km_data.items():
@@ -62,7 +67,9 @@ def plot_survival_comparison(
             # Update number at risk
             at_risk -= mask.sum()
         
-        color = colors["Weibull"] if "Weibull" in name else colors["Exponential"]
+        # Get distribution type from name
+        dist_type = next(k for k in colors.keys() if k in name)
+        color = colors[dist_type]
         plt.step(
             unique_times,
             survival_prob,
@@ -74,7 +81,8 @@ def plot_survival_comparison(
     
     # Add theoretical curves
     for name, (times, probs) in theoretical_data.items():
-        color = colors["Weibull"] if "Weibull" in name else colors["Exponential"]
+        dist_type = next(k for k in colors.keys() if k in name)
+        color = colors[dist_type]
         plt.plot(
             times, 
             probs,
@@ -112,7 +120,7 @@ def test_km_vs_theoretical() -> None:
     survival_data: Dict[str, KaplanMeierData] = {}
     theoretical_data: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
     
-    # 1. Weibull Distribution (Power Users)
+    # 1. Weibull Distribution
     shape, scale = 2.5, 20
     weibull_config = CohortConfig(
         name="Weibull",
@@ -130,7 +138,7 @@ def test_km_vs_theoretical() -> None:
         np.exp(-(t/scale)**shape)  # Weibull survival function
     )
     
-    # 2. Exponential Distribution (Average Users)
+    # 2. Exponential Distribution
     scale_exp = 10
     exp_config = CohortConfig(
         name="Exponential",
@@ -145,6 +153,42 @@ def test_km_vs_theoretical() -> None:
     theoretical_data["Exponential (True)"] = (
         t,
         np.exp(-t/scale_exp)  # Exponential survival function
+    )
+    
+    # 3. Gamma Distribution
+    shape_gamma, scale_gamma = 2.0, 10.0
+    gamma_config = CohortConfig(
+        name="Gamma",
+        distribution_params=GammaParams(
+            distribution=DistributionType.GAMMA,
+            sample_size=5000,
+            censoring_rate=0.0,
+            shape=shape_gamma,
+            scale=scale_gamma
+        )
+    )
+    survival_data["Gamma (KM)"] = generate_survival_times(gamma_config)
+    theoretical_data["Gamma (True)"] = (
+        t,
+        1 - special.gammainc(shape_gamma, t/scale_gamma)  # Gamma survival function
+    )
+    
+    # 4. Log-Normal Distribution
+    mu, sigma = 2.0, 0.5
+    lognorm_config = CohortConfig(
+        name="LogNormal",
+        distribution_params=LogNormalParams(
+            distribution=DistributionType.LOG_NORMAL,
+            sample_size=5000,
+            censoring_rate=0.0,
+            mu=mu,
+            sigma=sigma
+        )
+    )
+    survival_data["LogNormal (KM)"] = generate_survival_times(lognorm_config)
+    theoretical_data["LogNormal (True)"] = (
+        t,
+        1 - special.ndtr((np.log(t) - mu) / sigma)  # Log-normal survival function
     )
     
     # Create the comparison plot
