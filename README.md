@@ -9,18 +9,67 @@ This project implements survival analysis techniques to predict customer churn u
 - Changes in platform engagement
 - Other behavioral patterns
 
-## Environment Setup
+## Installation
 
-### macOS
+### Local Development Installation
 
+1. Clone the repository:
 ```bash
-source venv/bin/activate
-pip install -r requirements.txt
+git clone https://github.com/yourusername/censored-survivors.git
+cd censored-survivors
 ```
 
-### Windows (PowerShell)
+2. Create and activate a virtual environment:
 
+macOS/Linux:
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+Windows (PowerShell):
 ```powershell
+python -m venv venv
 .\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+```
+
+3. Install in editable mode with development dependencies:
+```bash
+pip install -e ".[dev]"
+```
+
+### Installing in Another Project
+
+To use this package in another project, install it directly from the local directory:
+```bash
+pip install /path/to/censored-survivors
+```
+
+## Usage
+
+```python
+from censored_survivors.kaplan_meier import KaplanMeierModel
+from censored_survivors.weibull_rnn import WeibullRNNModel
+from censored_survivors.cox_proportional_hazards import CoxModel
+
+# Example usage
+model = KaplanMeierModel()
+# ... etc
+```
+
+## Development
+
+Run tests:
+```bash
+pytest
+```
+
+Format code:
+```bash
+ruff format .
+```
+
+Type checking:
+```bash
+mypy .
 ```
