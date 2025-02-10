@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
-import torch
 from typing import Dict, List
 import pandas as pd
+import torch
 import os
 import sys
 
@@ -10,14 +10,13 @@ import sys
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 sys.path.insert(0, project_root)
 
-from lib.weibull_rnn.generate import (
+from censored_survivors.weibull_rnn.generate import (
     WeibullRNNConfig,
-    SequenceConfig,
     generate_weibull_rnn_data,
-    generate_sequence
+    SequenceConfig
 )
-from lib.weibull_rnn.run import WeibullRNNModel, WeibullLoss
-from lib.shared.distributions import (
+from censored_survivors.weibull_rnn.run import WeibullRNNModel
+from censored_survivors.shared.distributions import (
     WeibullParams,
     ExponentialParams,
     GammaParams,

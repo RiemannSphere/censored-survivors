@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -11,9 +12,9 @@ import sys
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 sys.path.insert(0, project_root)
 
-from lib.cox_proportional_hazards.generate import CoxCohortConfig, generate_cox_data
-from lib.cox_proportional_hazards.run import CoxModel
-from lib.shared.distributions import (
+from censored_survivors.cox_proportional_hazards.generate import CoxCohortConfig, generate_cox_data
+from censored_survivors.cox_proportional_hazards.run import CoxModel
+from censored_survivors.shared.distributions import (
     WeibullParams,
     ExponentialParams,
     GammaParams,

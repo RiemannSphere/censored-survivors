@@ -62,6 +62,8 @@ model = KaplanMeierModel()
 Run tests:
 ```bash
 pytest
+# skip the slowest test
+pytest -v -k "not weibull_rnn" 
 ```
 
 Format code:
