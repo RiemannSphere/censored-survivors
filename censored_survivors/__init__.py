@@ -1,8 +1,6 @@
-"""Survival analysis tools for customer churn prediction."""
+"""Survival analysis models and utilities."""
 
 from .shared import *
 from .cox_proportional_hazards import *
-from .kaplan_meier import *
-from .weibull_rnn import *
 
 __version__ = "0.1.0" 
